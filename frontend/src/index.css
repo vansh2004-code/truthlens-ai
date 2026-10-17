@@ -1,0 +1,51 @@
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/jetbrains-mono';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* HSL channels. Midnight graphite surfaces; electric-blue + violet accents. */
+    --bg: 222 33% 6%; /* #0A0D14 */
+    --surface: 223 32% 9%; /* #0F1420 */
+    --elevated: 223 31% 13%; /* #151B2B */
+    --border: 223 22% 20%;
+    --fg: 220 25% 96%;
+    --muted: 218 14% 66%;
+    --primary: 221 91% 62%;
+    --primary-fg: 0 0% 100%;
+    --accent: 262 83% 68%;
+    --danger: 0 84% 68%;
+    --warn: 38 92% 58%;
+    --ok: 160 70% 50%;
+    --ring: 221 100% 72%;
+  }
+  * { @apply border-border; }
+  html { color-scheme: dark; scroll-behavior: smooth; }
+  body {
+    @apply bg-bg font-sans text-fg antialiased;
+    background-image:
+      radial-gradient(900px 500px at 85% -10%, hsl(var(--accent) / 0.10), transparent 60%),
+      radial-gradient(900px 500px at 5% -5%, hsl(var(--primary) / 0.12), transparent 60%);
+    background-attachment: fixed;
+  }
+  :focus-visible { @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-bg; }
+  ::selection { background: hsl(var(--primary) / 0.4); }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+  }
+}
+
+@layer components {
+  .glass { @apply border bg-surface/70 backdrop-blur-md; }
+  .text-gradient { @apply bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent; }
+  .skeleton { @apply relative overflow-hidden rounded-md bg-elevated; }
+  .skeleton::after { content: ''; @apply absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/5 to-transparent; animation: shimmer 1.6s infinite; }
+  .prose-tl h2 { @apply mt-10 mb-3 text-2xl font-semibold tracking-tight; }
+  .prose-tl h3 { @apply mt-6 mb-2 text-lg font-semibold; }
+  .prose-tl p, .prose-tl li { @apply text-[15px] leading-7 text-muted; }
+  .prose-tl ul { @apply list-disc space-y-1.5 pl-5; }
+  .prose-tl a { @apply text-primary underline underline-offset-4; }
+  .prose-tl strong { @apply text-fg; }
+}

@@ -1,0 +1,36 @@
+# secrets / env
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+# python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+# node
+node_modules/
+frontend/dist/
+coverage/
+# runtime data (media, frames, model weights, databases)
+backend/data/
+data/
+*.db
+*.sqlite
+*.mp4
+*.mov
+*.webm
+*.mkv
+*.avi
+*.safetensors
+*.bin
+*.pt
+*.pth
+*.onnx
+# os / editor
+.DS_Store
+.idea/
+.vscode/

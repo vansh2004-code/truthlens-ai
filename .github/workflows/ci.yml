@@ -1,0 +1,47 @@
+name: CI
+on:
+  push: {branches: [main]}
+  pull_request:
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    defaults: {run: {working-directory: frontend}}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: 22, cache: npm, cache-dependency-path: frontend/package-lock.json}
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test -- --run
+      - run: npm run build
+      - run: npm audit --audit-level=high || true
+  backend:
+    runs-on: ubuntu-latest
+    defaults: {run: {working-directory: backend}}
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env: {POSTGRES_USER: truthlens, POSTGRES_PASSWORD: ci, POSTGRES_DB: truthlens}
+        ports: ["5432:5432"]
+        options: --health-cmd "pg_isready -U truthlens" --health-interval 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12", cache: pip}
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - run: pip install --extra-index-url https://download.pytorch.org/whl/cpu -r requirements-dev.txt
+      - run: ruff check app tests
+      - name: Migrations apply cleanly on PostgreSQL
+        env: {TL_DATABASE_URL: "postgresql+psycopg://truthlens:ci@localhost:5432/truthlens"}
+        run: alembic upgrade head
+      - name: Tests (model weights are NOT downloaded; adapter tests use stubs)
+        run: pytest -q
+      - run: pip-audit -r requirements.txt || true
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build ./backend
+      - run: docker build ./frontend
+  # GPU/dataset evaluation is intentionally NOT part of CI; see docs/TESTING.md
