@@ -1,6 +1,7 @@
 /// <reference types="vite/client" />
 interface ImportMetaEnv {
   readonly VITE_API_URL?: string
+  readonly VITE_PAGES_PREVIEW?: string
   readonly VITE_MAX_UPLOAD_MB?: string
   readonly VITE_MAX_DURATION_SECONDS?: string
 }

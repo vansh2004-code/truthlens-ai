@@ -4,6 +4,8 @@ import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 
 export default defineConfig({
+  // VITE_BASE is set only for the GitHub Pages build (e.g. /truthlens-ai/); default keeps '/'.
+  base: process.env.VITE_BASE ?? '/',
   plugins: [react()],
   resolve: { alias: { '@': path.resolve(__dirname, 'src') } },
   server: {
