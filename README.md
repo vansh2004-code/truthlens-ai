@@ -8,13 +8,14 @@ absence of detected manipulation never means a video is authentic.
 ## Status (read this first)
 | Area | State |
 |---|---|
-| Backend API, auth, jobs, reports, retention, RBAC | Implemented; 30 automated tests pass |
+| Backend API, auth, jobs, reports, retention, RBAC | Implemented; 31 automated tests pass |
 | Frontend (all pages) | Implemented; lint, typecheck, 43 tests, production build pass; manually exercised against the real API |
 | Postgres + Redis + Celery worker | Verified end-to-end locally (upload → worker → persisted result → PDF) |
 | **Pretrained detection model** | **Not yet verified.** Weights are downloaded from Hugging Face at first use; the development sandbox could not reach huggingface.co, so the configured model has *not* been run and no accuracy has been measured. See [docs/MODEL_SETUP.md](docs/MODEL_SETUP.md). If weights cannot load, analyses **fail with an explicit error**; nothing is faked. |
 | Audio deepfake analysis | Optional, off by default; audiovisual sync is **not implemented** |
 | Docker images / compose | Written, **not built** (no Docker daemon in the build sandbox); CI builds them |
-| GitHub push / cloud deployment | **Not done** (no valid credentials). See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) |
+| GitHub | Pushed; CI passes. UI-only preview on GitHub Pages (no backend there) |
+| Backend hosting | **Not deployed.** Single-container image + Hugging Face Space script exist but are unrun; see [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) |
 | Benchmarks (precision/recall/ROC-AUC) | **None executed.** Evaluation script exists; no dataset was available |
 
 ## Quick start (Docker)

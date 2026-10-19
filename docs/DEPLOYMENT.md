@@ -16,6 +16,14 @@ This document is the plan and the exact steps; nothing here has been executed ag
 Cost reality: free tiers generally lack persistent disk, enough RAM for PyTorch, or background workers. Expect a paid instance (~$10–40/month range) plus managed
 Postgres/Redis. Nothing was subscribed to.
 
+## Free-ish option: single container on a Hugging Face Space (not yet deployed)
+The root `Dockerfile` builds UI + API in one image (SQLite, in-process jobs, CPU). A free CPU Space offers 2 vCPU / 16 GB RAM, enough for the ViT model.
+Same origin for UI and API, so no CORS/cookie setup. `python deploy/huggingface/deploy_space.py <user>/truthlens-ai` creates the Space and uploads this repo
+(needs `HF_TOKEN` with write access and network access to huggingface.co; neither was available in the build sandbox, so this has **not been run**).
+Caveats: free Spaces sleep when idle and have **ephemeral disk**: accounts and results are lost on restart (attach a persistent bucket/paid storage or an
+external Postgres to fix). Because `TL_ENV=production`, no admin is auto-created and SMTP is unset, so verification/reset emails are not sent. Open the app at the
+direct `*.hf.space` URL, not inside the huggingface.co iframe (third-party cookie blocking can break sign-in there).
+
 ## Environment variables
 See `.env.example`. Required in production: `TL_ENV=production`, `TL_SECRET_KEY` (≥ 32 random chars), `TL_COOKIE_SECURE=true`, `TL_DATABASE_URL`, `TL_REDIS_URL`,
 `TL_CORS_ORIGINS`, `TL_FRONTEND_URL`, SMTP settings (else verification/reset emails cannot be sent). The app refuses to start in production with a weak key, insecure cookies, or wildcard CORS.

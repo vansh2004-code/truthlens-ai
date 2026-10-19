@@ -39,6 +39,45 @@ def err(status: int, code: str, message: str, details=None, headers=None) -> JSO
     return JSONResponse({"error": {"code": code, "message": message, "details": details}}, status_code=status, headers=headers)
 
 
+def _mount_spa(app: FastAPI) -> None:
+    """Optionally serve the built frontend from the API (same origin => no CORS/cookie issues)."""
+    from fastapi.responses import FileResponse
+
+    d = get_settings().static_dir
+    if not d or not (d / "index.html").exists():
+        return
+    root = d.resolve()
+
+    @app.get("/{path:path}", include_in_schema=False)
+    def spa(path: str):
+        if path.startswith("api/") or path in ("healthz", "readyz"):
+            return err(404, "not_found", "Not found.")
+        f = (root / path).resolve()
+        if path and root in f.parents and f.is_file():
+            return FileResponse(f)
+        return FileResponse(root / "index.html")
+
+
+def _mount_frontend(app: FastAPI, static_dir) -> None:
+    """Single-container mode: serve the built SPA from the API process (same origin => no CORS/cookie issues)."""
+    from pathlib import Path
+
+    from fastapi.responses import FileResponse
+
+    if not static_dir or not (Path(static_dir) / "index.html").exists():
+        return
+    root = Path(static_dir).resolve()
+
+    @app.get("/{full_path:path}", include_in_schema=False)
+    async def spa(full_path: str):
+        if full_path.startswith(("api/", "healthz", "readyz")):
+            return err(404, "not_found", "Not found.")
+        target = (root / full_path).resolve()
+        if full_path and root in target.parents and target.is_file():
+            return FileResponse(target, headers={"Cache-Control": "public, max-age=31536000, immutable"} if "/assets/" in f"/{full_path}" else {})
+        return FileResponse(root / "index.html", headers={"Cache-Control": "no-cache"})
+
+
 def create_app() -> FastAPI:
     s = get_settings()
     setup_logging()
@@ -86,6 +125,8 @@ def create_app() -> FastAPI:
 
     for r in (health.router, auth.router, oauth.router, analyses.router, signed.router, users.router, admin.router):
         app.include_router(r)
+    _mount_spa(app)
+    _mount_frontend(app, s.static_dir)  # registered last so API routes win
     return app
 
 

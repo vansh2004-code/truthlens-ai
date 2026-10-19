@@ -96,7 +96,7 @@ def register(request: Request, body: RegisterIn, response: Response, db: DBSessi
         raise ApiError(409, "email_taken", "An account with this email already exists.")
     first = db.scalar(select(User.id).limit(1)) is None
     user = User(email=email, password_hash=hash_password(body.password), display_name=body.display_name.strip() or email.split("@")[0],
-                role=Role.admin if first and get_settings().env != "production" else Role.user)
+                role=Role.admin if (first and get_settings().env != "production") or email in get_settings().admin_email_set else Role.user)
     db.add(user)
     db.commit()
     audit(db, "user.register", user.id, request=request)

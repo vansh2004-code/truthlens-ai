@@ -22,6 +22,8 @@ class Settings(BaseSettings):
     cors_origins: str = "http://localhost:5173"
     frontend_url: str = "http://localhost:5173"
     require_email_verification: bool = False
+    admin_emails: str = ""  # comma-separated; these emails become admin on registration (works in production)
+    static_dir: Path | None = None  # if set, serve the built SPA from the API (single-container deployments)
     google_client_id: str = ""
     google_client_secret: str = ""
 
@@ -47,7 +49,8 @@ class Settings(BaseSettings):
     job_timeout_seconds: int = 900
     ffmpeg_cpu_seconds: int = 120
     ffmpeg_mem_mb: int = 2048
-    run_jobs_inline: bool = False  # run in a thread instead of Celery (dev/test only)
+    run_jobs_inline: bool = False  # run in a thread instead of Celery (single-container/dev/test)
+    static_dir: Path | None = None  # if set and present, serve the built frontend (single-container mode)
 
     # Model
     model_id: str = "prithivMLmods/Deep-Fake-Detector-v2-Model"
@@ -71,6 +74,10 @@ class Settings(BaseSettings):
         if v not in {"lax", "strict", "none"}:
             raise ValueError("cookie_samesite must be lax, strict or none")
         return v
+
+    @property
+    def admin_email_set(self) -> set[str]:
+        return {e.strip().lower() for e in self.admin_emails.split(",") if e.strip()}
 
     @property
     def cors_origin_list(self) -> list[str]:

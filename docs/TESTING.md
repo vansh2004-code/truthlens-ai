@@ -1,5 +1,5 @@
 # Testing
-- Backend: `cd backend && pytest -q` (30 tests: auth/CSRF/lockout/reset/verification, upload validation, malformed media, full job lifecycle, report
+- Backend: `cd backend && pytest -q` (31 tests: auth/CSRF/lockout/reset/verification, upload validation, malformed media, full job lifecycle, report
   PDF/JSON, authorization boundaries, signed links, retention/deletion, account deletion, RBAC, temporal & tracker units, real HF adapter on a
   tiny **untrained** local ViT — plumbing only). Pipeline tests use a **test-only stub classifier**; they prove plumbing, not detection quality.
 - Frontend: `cd frontend && npm run lint && npm run typecheck && npm test -- --run && npm run build` (43 tests).

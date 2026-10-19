@@ -44,4 +44,5 @@ jobs:
       - uses: actions/checkout@v4
       - run: docker build ./backend
       - run: docker build ./frontend
+      - run: docker build -t truthlens-single .   # single-container (Hugging Face Space) image
   # GPU/dataset evaluation is intentionally NOT part of CI; see docs/TESTING.md
