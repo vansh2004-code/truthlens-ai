@@ -8,7 +8,7 @@ absence of detected manipulation never means a video is authentic.
 ## Status (read this first)
 | Area | State |
 |---|---|
-| Backend API, auth, jobs, reports, retention, RBAC | Implemented; 31 automated tests pass |
+| Backend API, auth, jobs, reports, retention, RBAC | Implemented; 33 automated tests pass |
 | Frontend (all pages) | Implemented; lint, typecheck, 43 tests, production build pass; manually exercised against the real API |
 | Postgres + Redis + Celery worker | Verified end-to-end locally (upload → worker → persisted result → PDF) |
 | **Pretrained detection model** | **Not yet verified.** Weights are downloaded from Hugging Face at first use; the development sandbox could not reach huggingface.co, so the configured model has *not* been run and no accuracy has been measured. See [docs/MODEL_SETUP.md](docs/MODEL_SETUP.md). If weights cannot load, analyses **fail with an explicit error**; nothing is faked. |
