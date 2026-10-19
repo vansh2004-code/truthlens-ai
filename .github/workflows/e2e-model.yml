@@ -1,0 +1,32 @@
+name: E2E with real model
+# Runs the Codespace setup script, downloads the real Hugging Face model, starts the app and analyses a real face video.
+# Verifies plumbing end to end. It does NOT measure accuracy.
+on:
+  workflow_dispatch:
+  push: {branches: [main], paths: [".devcontainer/**", "backend/scripts/e2e_smoke.py", ".github/workflows/e2e-model.yml"]}
+permissions: {contents: read}
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - uses: actions/setup-node@v4
+        with: {node-version: 22}
+      - name: Setup (same script the Codespace uses)
+        run: bash .devcontainer/setup.sh
+      - name: Start app
+        run: |
+          bash .devcontainer/start.sh
+          for i in $(seq 1 40); do curl -fsS localhost:8000/readyz && break; sleep 3; done
+          curl -fsS localhost:8000/readyz
+      - name: Smoke test with real model
+        working-directory: backend
+        run: |
+          .venv/bin/pip install -q scikit-image
+          .venv/bin/python scripts/e2e_smoke.py
+      - name: Server log (on failure)
+        if: failure()
+        run: tail -n 80 backend/data/server.log || true
