@@ -15,6 +15,7 @@ absence of detected manipulation never means a video is authentic.
 | Audio deepfake analysis | Optional, off by default; audiovisual sync is **not implemented** |
 | Docker images / compose | Written, **not built** (no Docker daemon in the build sandbox); CI builds them |
 | GitHub | Pushed; CI passes. UI-only preview on GitHub Pages (no backend there) |
+| Private live demo | `.devcontainer/` for GitHub Codespaces (owner-only port). `start.sh` tested locally; full Codespace setup **not yet run** |
 | Backend hosting | **Not deployed.** Single-container image + Hugging Face Space script exist but are unrun; see [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) |
 | Benchmarks (precision/recall/ROC-AUC) | **None executed.** Evaluation script exists; no dataset was available |
 

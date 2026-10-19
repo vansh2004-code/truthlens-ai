@@ -16,6 +16,14 @@ This document is the plan and the exact steps; nothing here has been executed ag
 Cost reality: free tiers generally lack persistent disk, enough RAM for PyTorch, or background workers. Expect a paid instance (~$10–40/month range) plus managed
 Postgres/Redis. Nothing was subscribed to.
 
+## Private live demo on GitHub Codespaces (only you can open it)
+`.devcontainer/` runs the whole app (UI + API + in-process jobs + SQLite + model) inside a GitHub Codespace. The forwarded port is **Private** by default: only
+the signed-in GitHub account that owns the codespace can open it; do **not** change it to Public. Steps: repo page → **Code → Codespaces → Create codespace on main**
+(first setup takes several minutes: CPU PyTorch, frontend build, model download) → **Ports** tab → open port **8000**. The first account you register becomes admin
+(development mode); the port is private, so this is safe only while it stays private. Limits: the codespace stops after ~30 idle minutes (the app restarts
+automatically when you reopen it; data in `backend/data/` persists until the codespace is deleted), and it uses your free monthly Codespaces quota.
+Not verified end-to-end: this was written without access to a Codespace; `start.sh` was tested locally, `setup.sh` only syntax-checked.
+
 ## Free-ish option: single container on a Hugging Face Space (not yet deployed)
 The root `Dockerfile` builds UI + API in one image (SQLite, in-process jobs, CPU). A free CPU Space offers 2 vCPU / 16 GB RAM, enough for the ViT model.
 Same origin for UI and API, so no CORS/cookie setup. `python deploy/huggingface/deploy_space.py <user>/truthlens-ai` creates the Space and uploads this repo
