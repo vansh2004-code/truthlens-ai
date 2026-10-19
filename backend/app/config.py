@@ -54,7 +54,7 @@ class Settings(BaseSettings):
 
     # Model
     model_id: str = "prithivMLmods/Deep-Fake-Detector-v2-Model"
-    model_revision: str = "main"
+    model_revision: str = "3a99ae26f52c7ac7c3a53103b6cf3a8b617f7093"  # commit verified to load and run in CI
     model_cache_dir: Path = Path("./data/models")
     fake_label_keywords: str = "fake,deepfake,manipulated,synthetic"
     device: str = "auto"  # auto | cpu | cuda

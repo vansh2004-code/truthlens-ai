@@ -61,6 +61,14 @@ with tempfile.TemporaryDirectory() as tmp:
         "labels": (health.get("info") or {}).get("labels"), "duration_s": round(time.time() - t0, 1),
         "pdf_status": pdf.status_code, "pdf_is_pdf": pdf.content[:5] == b"%PDF-",
     }
+    try:
+        from huggingface_hub import model_info
+
+        mi = model_info(summary["model"], revision=summary["model_version"])
+        summary["hf_license_tag"] = getattr(mi.card_data, "license", None) if mi.card_data else None
+        summary["hf_base_model"] = getattr(mi.card_data, "base_model", None) if mi.card_data else None
+    except Exception as e:  # noqa: BLE001
+        summary["hf_license_tag"] = f"lookup failed: {type(e).__name__}"
     note(json.dumps(summary))
     print(json.dumps(summary, indent=2))
     if d.get("status") != "completed":

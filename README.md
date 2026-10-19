@@ -11,7 +11,7 @@ absence of detected manipulation never means a video is authentic.
 | Backend API, auth, jobs, reports, retention, RBAC | Implemented; 33 automated tests pass |
 | Frontend (all pages) | Implemented; lint, typecheck, 43 tests, production build pass; manually exercised against the real API |
 | Postgres + Redis + Celery worker | Verified end-to-end locally (upload → worker → persisted result → PDF) |
-| **Pretrained detection model** | **Not yet verified.** Weights are downloaded from Hugging Face at first use; the development sandbox could not reach huggingface.co, so the configured model has *not* been run and no accuracy has been measured. See [docs/MODEL_SETUP.md](docs/MODEL_SETUP.md). If weights cannot load, analyses **fail with an explicit error**; nothing is faked. |
+| **Pretrained detection model** | Downloads and runs (pinned commit, CPU) in a GitHub Actions end-to-end test. **Accuracy not measured**; one real photo scored 0.67-0.72 "Deepfake", so expect false alarms. See [docs/MODEL_SETUP.md](docs/MODEL_SETUP.md). If weights cannot load, analyses fail with an explicit error. |
 | Audio deepfake analysis | Optional, off by default; audiovisual sync is **not implemented** |
 | Docker images / compose | Written, **not built** (no Docker daemon in the build sandbox); CI builds them |
 | GitHub | Pushed; CI passes. UI-only preview on GitHub Pages (no backend there) |
